@@ -63,29 +63,29 @@ io.on("connection", socket => {
     detail(io, socket)
 
 })
-// mongoose.connect("mongodb://localhost:27017/blog-data", {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true
-// }).then(() => {
-//     console.log("blog-data数据库已经连接")
-//     server.listen("81", function () {
-//         console.log("81端口已经启动")
-//     })
-// }).catch(() => {
-//     console.log("数据库连接失败")
-// })
-
-mongoose.connect("mongodb://localhost:27019/blog-data", {
+mongoose.connect("mongodb://localhost:27017/blog-data", {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
     console.log("blog-data数据库已经连接")
-    // app.listen("4000", function () {
-    //     console.log("4000端口已经启动")
-    // })
-    server.listen(4000, () => {
-        console.log(`监听地址: http://localhost:4000`);
+    server.listen("81", function() {
+        console.log("81端口已经启动")
     })
 }).catch(() => {
     console.log("数据库连接失败")
 })
+
+// mongoose.connect("mongodb://localhost:27019/blog-data", {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true
+// }).then(() => {
+//     console.log("blog-data数据库已经连接")
+//     // app.listen("4000", function () {
+//     //     console.log("4000端口已经启动")
+//     // })
+//     server.listen(4000, () => {
+//         console.log(`监听地址: http://localhost:4000`);
+//     })
+// }).catch(() => {
+//     console.log("数据库连接失败")
+// })

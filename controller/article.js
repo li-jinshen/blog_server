@@ -3,7 +3,7 @@ const Article = require("../model/article")
 const fs = require("fs")
 
 //获取纯文本方法,并截取一定数量的文字
-function removeHTMLTag(str, number) {
+function removeHTMLTag (str, number) {
 
     str = str.replace(/<\/?[^>]*>/g, ''); //去除HTML tag
 
@@ -79,10 +79,10 @@ exports.GetArticle = async data => {
     let result;
     if (title) {
         const reg = new RegExp(title, "i") //不区分大小写
-        result = await Article.find({ title: { $regex: reg } }).sort({ date: -1 })
+        result = await Article.find({ title: { $regex: reg } }, { id: 1, title: 1, views: 1, date: 1 }).sort({ views: -1 })
     } else if (category) {
         const reg = new RegExp(category, "i") //不区分大小写
-        result = await Article.find({ category: { $regex: reg } }).sort({ date: -1 })
+        result = await Article.find({ category: { $regex: reg } }, { id: 1, title: 1, views: 1, date: 1 }).sort({ views: -1 })
     } else if (id) {
         const update = await Article.updateOne({ _id: id }, { $inc: { views: 1 } }) //更新浏览量
         result = await Article.find({ _id: id })
@@ -97,7 +97,7 @@ exports.GetArticle = async data => {
     }
 }
 
-//根据页面获取文章
+//根据页面获取文章 
 exports.GetSinglePage = async data => {
     const { limit, page, sort } = data;
 
@@ -114,6 +114,17 @@ exports.GetSinglePage = async data => {
         msg: "数据接收成功",
         data: result,
         count
+    }
+}
+
+// 获取排行榜
+exports.getRank = async data => {
+    const { limit } = data;
+    let result = await Article.find({}, { id: 1, title: 1, views: 1, date: 1 }).sort({ views: -1 }).limit(+limit)
+    return {
+        status: 1,
+        msg: "数据接收成功",
+        data: result,
     }
 }
 
@@ -148,10 +159,11 @@ exports.DeleteArticle = async data => {
 //根据关键字搜索文章
 exports.SearchArticle = async data => {
     const { keyword } = data;
+    console.log("keyword", keyword)
     const reg = new RegExp(keyword, "i") //不区分大小写
-    var titleResult = await Article.find({ title: { $regex: reg } }).sort({ date: -1 })
+    var titleResult = await Article.find({ title: { $regex: reg } }, { id: 1, title: 1, views: 1, date: 1 }).sort({ date: -1 })
     const cate = new RegExp(keyword, "i") //不区分大小写
-    var categoryResult = await Article.find({ category: { $regex: cate } }).sort({ date: -1 })
+    var categoryResult = await Article.find({ category: { $regex: cate } }, { id: 1, title: 1, views: 1, date: 1 }).sort({ date: -1 })
     var result = []
     result.push(...titleResult);
     categoryResult.forEach(item => {

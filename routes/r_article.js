@@ -2,6 +2,7 @@ const {
     Published,
     GetArticle,
     GetSinglePage,
+    getRank,
     DeleteArticle,
     getCategoryArticle,
     SearchArticle,
@@ -24,6 +25,12 @@ module.exports = {
     // 获取单页文章
     "GET /article/obtain": async ctx => {
         let res = await GetSinglePage(ctx.request.query)
+        ctx.body = res
+    },
+
+    // 获取文章点击排行
+    "GET /rank/obtain": async ctx => {
+        let res = await getRank(ctx.request.query)
         ctx.body = res
     },
 
