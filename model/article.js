@@ -15,6 +15,10 @@ const articleSchema = Schema({
     background: {
         type: String,
         default: null
+    },
+    like: {
+        type: Number,
+        default: 0
     }
 });
 

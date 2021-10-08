@@ -106,8 +106,10 @@ exports.GetSinglePage = async data => {
     let result = ""
     if (sort == 1) {
         result = await Article.find().sort({ date: -1 }).skip(start).limit(+limit)
-    } else {
+    } else if (sort == 2) {
         result = await Article.find().sort({ views: -1 }).skip(start).limit(+limit)
+    } else {
+        result = await Article.find({}, { id: 1, title: 1, views: 1, date: 1, category: 1 }).sort({ date: -1 }).skip(start).limit(+limit)
     }
     return {
         status: 1,
@@ -159,7 +161,6 @@ exports.DeleteArticle = async data => {
 //根据关键字搜索文章
 exports.SearchArticle = async data => {
     const { keyword } = data;
-    console.log("keyword", keyword)
     const reg = new RegExp(keyword, "i") //不区分大小写
     var titleResult = await Article.find({ title: { $regex: reg } }, { id: 1, title: 1, views: 1, date: 1 }).sort({ date: -1 })
     const cate = new RegExp(keyword, "i") //不区分大小写
