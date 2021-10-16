@@ -16,10 +16,7 @@ const io = require('socket.io')(server); //核心，实现客户端之间交互�
 // 上传模块
 let { upload } = require("./tool/multer")
 
-//关于分类模块导入的变量
-const {
-    GetCategory
-} = require("./controller/category")
+
 
 
 app.use(static("./public"))  //设置静态目录
@@ -46,8 +43,6 @@ for (let key in routesData) {
     }
 }
 
-//分类模块的路由
-router.get("/category/get", GetCategory)
 
 
 // 解决刷新后not found，设置前端路由

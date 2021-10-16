@@ -7,7 +7,10 @@ const articleSchema = Schema({
     value: String,  //文本
     content: String, //html文本
     Intro: String,
-    date: Date,
+    date: {
+        type: Date,
+        default: Date.now
+    },
     views: {
         type: Number,
         default: 0

@@ -22,7 +22,7 @@ function removeHTMLTag (str, number) {
 
 //发表文章 || 更新文章
 exports.Published = async data => {
-    const { title, content, category, _id } = data;
+    const { title, category, _id } = data;
     const result = await Article.findOne({ title })
     if (result && !_id) {
         return {
@@ -31,14 +31,15 @@ exports.Published = async data => {
         }
     } else {
         //截取文章的一部分作为简介
-        data.Intro = removeHTMLTag(content, 400)
+        // data.Intro = removeHTMLTag(content, 400)
         //匹配到文章里的第一章图片，将将其作为展示图片
-        var imgReg = /<img.*?(?:>|\/>)/gi;
-        if (content.match(imgReg)) {
-            data.background = content.match(imgReg)[0];
-        }
+        // var imgReg = /<img.*?(?:>|\/>)/gi;
+        // if (content.match(imgReg)) {
+        //     data.background = content.match(imgReg)[0];
+        // }
         if (_id) {  //_id存在则是更新文章
             const result = await Article.updateOne({ _id }, data)
+            // console.log(result)
             if (result.nModified) {
                 return {
                     status: 1,
@@ -55,13 +56,16 @@ exports.Published = async data => {
 
         } else {//不存在则是发表文章
             //分类集合的添加与查询
-            const reg = new RegExp(category[0], "i") //不区分大小写
-            const cateResult = await Category.findOne({ name: { $regex: reg } })
-            if (cateResult) {
-                const res1 = await Category.updateOne({ _id: cateResult._id }, { $inc: { count: 1 } })
-            } else {
-                const res2 = await Category.create({ name: category[0], count: 1 })
-            }
+            let allResult = await Promise.all(category.map(async item => {
+                const reg = new RegExp(item, "i") //不区分大小写
+                const cateResult = await Category.findOne({ name: { $regex: reg } })
+                if (cateResult) {
+                    const res1 = await Category.updateOne({ _id: cateResult._id }, { $inc: { count: 1 } })
+                } else {
+                    const res2 = await Category.create({ name: item, count: 1 })
+                }
+                return item
+            }))
             const { _id } = await Article.create(data)
             return {
                 status: 1,
@@ -109,7 +113,7 @@ exports.GetSinglePage = async data => {
     } else if (sort == 2) {
         result = await Article.find().sort({ views: -1 }).skip(start).limit(+limit)
     } else {
-        result = await Article.find({}, { id: 1, title: 1, views: 1, date: 1, category: 1 }).sort({ date: -1 }).skip(start).limit(+limit)
+        result = await Article.find({}, { id: 1, title: 1, views: 1, date: 1, category: 1, like: 1 }).sort({ date: -1 }).skip(start).limit(+limit)
     }
     return {
         status: 1,
@@ -132,13 +136,16 @@ exports.getRank = async data => {
 
 // 查找同分类的文章
 exports.getCategoryArticle = async data => {
-    let { category } = data;
+    let { category, page, limit } = data;
     let reg = new RegExp(category, "i") //不区分大小写
-    let result = await Article.find({ category: { $regex: reg } }).sort({ views: -1 }).limit(7)
+    const start = (+limit) * (+page - 1);
+    const count = await Article.find({ category: { $regex: reg } }).countDocuments();
+    let result = await Article.find({ category: { $regex: reg } }, { id: 1, title: 1, views: 1, date: 1, like: 1, category: 1 }).sort({ views: -1 }).skip(start).limit(+limit)
     return {
         status: 1,
         msg: "数据接收成功",
         data: result,
+        count
     }
 }
 
