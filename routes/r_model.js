@@ -2,7 +2,9 @@
 const {
     AddModel,
     GetModel,
-    GetModelList
+    GetModelList,
+    updateModel,
+    updateModelItem
 } = require("../controller/model")
 
 
@@ -17,9 +19,19 @@ module.exports = {
         let res = await GetModel()
         ctx.body = res
     },
-    "get /model/list": async ctx => {
+    // 获取模块详情
+    "GET /model/list": async ctx => {
         let res = await GetModelList(ctx.request.query)
         ctx.body = res
     },
-
+    // 模块更新
+    "POST /model/update/model": async ctx => {
+        let res = await updateModel(ctx.request.body)
+        ctx.body = res
+    },
+    // 模块子项操作
+    "POST /model/update/list": async ctx => {
+        let res = await updateModelItem(ctx.request.body)
+        ctx.body = res
+    },
 }

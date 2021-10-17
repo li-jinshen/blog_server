@@ -12,6 +12,7 @@ const modelSchema = new mongoose.Schema({
         default: []
         // 数组存储对象
         // 该对象的相关属性： 
+        // name：名称
         // picture：图片
         // describe：描述
         // link：链接
