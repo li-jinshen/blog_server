@@ -1,6 +1,7 @@
 const {
     Record,
-    Obtain
+    Obtain,
+    ObtainCount
 } = require("../controller/statistical")
 
 module.exports = {
@@ -10,10 +11,15 @@ module.exports = {
         ctx.body = res
     },
 
-    // 获取
+    // 获取浏览量详情
     "GET /access/obtain": async ctx => {
         let res = await Obtain()
         ctx.body = res
     },
 
+    // 获取总浏览量
+    "GET /access/count/obtain": async ctx => {
+        let res = await ObtainCount()
+        ctx.body = res
+    },
 }

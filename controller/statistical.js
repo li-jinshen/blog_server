@@ -1,8 +1,8 @@
 const Statistical = require("../model/statistical");
 // 获取最近30天
-function getThirty(num) {
+function getThirty (num) {
     //最近七天和最近三十天时间
-    function timeForMat(count) {
+    function timeForMat (count) {
         // 拼接时间
         let time1 = new Date()
         time1.setTime(time1.getTime() - 24 * 60 * 60 * 1000)
@@ -47,7 +47,7 @@ function getThirty(num) {
     return dateList
 }
 
-function getDate(originVal) {
+function getDate (originVal) {
     const dt = new Date(originVal)
     const y = dt.getFullYear()
     const m = (dt.getMonth() + 1 + '').padStart(2, '0')
@@ -150,7 +150,8 @@ exports.Record = async data => {
             return item.ip == ip
         })
         if (index > -1) {
-            let distance = (todayVisit.visitors[index].date.getTime() - today.getTime()) / 1000 / 60
+            let distance = (today.getTime() - todayVisit.visitors[index].date.getTime()) / 1000 / 60
+            console.log(distance)
             if (distance < 10) {
                 return
             } else {
@@ -176,10 +177,16 @@ exports.Record = async data => {
     //         state: 0
     //     }
     // }
+    let visitorRecord = { ip, address: cname, date: new Date() }
     let statistical = await Statistical.findOne({ name: "statistical" })
     let res = null
     if (statistical) {
-        let { views, address, count } = statistical
+        let { views, address, count, records } = statistical
+        let recordList = records
+        if (recordList.length >= 100) {
+            recordList.shift()
+        }
+        recordList.push(visitorRecord)
         let date = new Date()
         let day = date.getDate()
         if (views[views.length - 1].day == day) {
@@ -193,7 +200,7 @@ exports.Record = async data => {
         }
         address[location]++
         count++
-        res = await Statistical.updateOne({ name: "statistical" }, { $set: { address, count, views } })
+        res = await Statistical.updateOne({ name: "statistical" }, { $set: { address, count, views, records: recordList } })
     } else { //不存在就创建
         let dateList = getThirty(30)
         let views = []
@@ -208,7 +215,8 @@ exports.Record = async data => {
         res = await Statistical.create({
             views,
             address: addressList,
-            count: 1
+            count: 1,
+            records: [visitorRecord]
         })
     }
     if (res || res.nModified > 0) {
@@ -233,7 +241,21 @@ exports.Obtain = async data => {
         return {
             count: 0,
             view: [],
-            address: {}
+            address: {},
+            records: []
+        }
+    }
+}
+
+// 获取总浏览量
+exports.ObtainCount = async data => {
+    let statistical = await Statistical.findOne({ name: "statistical" }, { count: 1 })
+    // console.log(statistical)
+    if (statistical) {
+        return statistical
+    } else {
+        return {
+            count: 0,
         }
     }
 }

@@ -13,7 +13,8 @@ const statisticalModel = new Schema({
         type: Object,
         default: {}
     },
-    views: []
+    views: [],
+    records: []
 })
 const statistical = mongoose.model("statistical", statisticalModel);
 module.exports = statistical;

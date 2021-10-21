@@ -1,7 +1,7 @@
 const User = require("../model/user")
 const Account = require("../model/account")
 const { InvitationCode } = require("../tool/common")
-const { encrypt } = require("../tool/crypto")
+const { encrypt, decrypt } = require("../tool/crypto")
 const { generateToken, verifyToken } = require("../tool/token")
 const userSocket = require("../model/userSocket")
 
@@ -65,7 +65,7 @@ exports.Register = async data => {
 
 
 
-//登陆
+//登录
 exports.Login = async data => {
     let { account, passWord } = data
     if (passWord == "") { // 游客登录
@@ -75,12 +75,14 @@ exports.Login = async data => {
         let res = await User.updateOne({ account }, { $set: { LandingTime: new Date() } })
         return {
             status: 1,
-            msg: "登陆成功",
+            msg: "登录成功",
             token,
             user: result
         };
     } else { // 用户登陆
         let pwd = encrypt(passWord)
+        // let accountUser = await User.findOne({ account })
+        // console.log(decrypt(accountUser.passWord))
         var result = await User.findOne({ account, passWord: pwd })
         let res = await User.updateOne({ account }, { $set: { LandingTime: new Date() } })
         if (result) {
@@ -88,14 +90,14 @@ exports.Login = async data => {
             let token = generateToken(result.account.toString())
             return {
                 status: 1,
-                msg: "登陆成功",
+                msg: "登录成功",
                 token,
                 user: result
             };
         } else {
             return {
                 status: 0,
-                msg: "登陆失败，账号或者密码错误"
+                msg: "登录失败，账号或者密码错误"
             }
         }
     }
