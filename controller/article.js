@@ -104,14 +104,14 @@ exports.GetArticle = async data => {
 //根据页面获取文章 
 exports.GetSinglePage = async data => {
     const { limit, page, sort } = data;
-
+    console.log(sort, "sort")
     const count = await Article.find().countDocuments();
     const start = (+limit) * (+page - 1);
     let result = ""
     if (sort == 1) {
-        result = await Article.find().sort({ date: -1 }).skip(start).limit(+limit)
+        result = await Article.find({}, { id: 1, title: 1, views: 1, date: 1, category: 1, like: 1, background: 1, Intro: 1 }).sort({ date: -1 }).skip(start).limit(+limit)
     } else if (sort == 2) {
-        result = await Article.find().sort({ views: -1 }).skip(start).limit(+limit)
+        result = await Article.find({}, { id: 1, title: 1, views: 1, date: 1, category: 1, like: 1, background: 1, Intro: 1 }).sort({ views: -1 }).skip(start).limit(+limit)
     } else {
         result = await Article.find({}, { id: 1, title: 1, views: 1, date: 1, category: 1, like: 1 }).sort({ date: -1 }).skip(start).limit(+limit)
     }
