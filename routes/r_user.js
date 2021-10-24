@@ -4,6 +4,7 @@ const {
     Refresh,
     FindFile,
     ModifyFile,
+    ModifyPassword,
     allUser,
     setMute,
     LandingTime,
@@ -46,6 +47,12 @@ module.exports = {
         let res = await ModifyFile(ctx.request.body)
         ctx.body = res
     },
+    // 修改密码
+    "POST /modify/password": async ctx => {
+        let res = await ModifyPassword(ctx.request.body)
+        ctx.body = res
+    },
+
 
     // 查找所有用户
     "GET /user/findAll": async ctx => {

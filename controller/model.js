@@ -99,7 +99,7 @@ exports.updateModelItem = async data => {
         let modelList = result.modelList
         let modelItemName = modelItem.name
         let itemIndex = modelList.findIndex(item => {
-            return item.name = modelItemName
+            return item.name == modelItemName
         })
         switch (type) {
             case "modify":

@@ -151,8 +151,8 @@ exports.Record = async data => {
         })
         if (index > -1) {
             let distance = (today.getTime() - todayVisit.visitors[index].date.getTime()) / 1000 / 60
-            console.log(distance)
-            if (distance < 10) {
+            // console.log(distance)
+            if (distance < 5) {
                 return
             } else {
                 todayVisit.visitors[index].date = today

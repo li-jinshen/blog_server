@@ -152,8 +152,15 @@ exports.FindFile = async data => {
 
 // 修改用户资料
 exports.ModifyFile = async data => {
-    const { _id } = data
-    var result = await User.updateOne({ _id }, data)
+    const { _id, userName, photo, signature } = data
+    var result = await User.updateOne({ _id }, {
+        $set: {
+            userName,
+            photo,
+            signature
+        }
+    })
+
     if (result.nModified) {
         return {
             status: 1,
@@ -166,6 +173,30 @@ exports.ModifyFile = async data => {
         }
     }
 }
+
+// 修改密码
+exports.ModifyPassword = async data => {
+    const { _id, password } = data
+    var result = await User.updateOne({ _id }, {
+        $set: {
+            passWord: encrypt(password)
+        }
+    })
+
+    if (result.nModified) {
+        return {
+            status: 1,
+            msg: "修改密码成功"
+        }
+    } else {
+        return {
+            status: 0,
+            msg: "修改密码失败"
+        }
+    }
+}
+
+
 // 查找所有用户
 exports.allUser = async data => {
     let result = await User.find().sort({ LandingTime: -1 })
